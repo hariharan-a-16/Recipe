@@ -1,0 +1,49 @@
+    body {
+    background-image: url(images/MonSoon\ photography📷🤍.jpeg);
+    background-repeat: no-repeat;
+    background-size: cover;
+      /* background: #f2f7fa; */
+    }
+    .jumbotron {
+        margin-top: 70px;
+      background: #d9ecf2;
+      border-radius: 8px;
+      padding: 2rem 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    #add-recipe,
+    #recipes {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      padding: 2rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card-img-top {
+      height: 220px;
+      object-fit: cover;
+      border-radius: 10px 10px 0 0;
+      width: 100%;
+    }
+    .modal-body img {
+      max-height: 300px;
+      object-fit: contain;
+      width: 100%;
+      border-radius: 10px;
+    }
+    .star-label {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .star-input {
+      display: none;
+    }
+    /* Highlight stars on hover or checked */
+    .star-input:checked ~ .star-label,
+    .star-label:hover,
+    .star-label:hover ~ .star-label {
+      color: #ffc107;
+    }
