@@ -1,18 +1,21 @@
     body {
-    background-image: url(images/MonSoon\ photography📷🤍.jpeg);
-    background-repeat: no-repeat;
+        background-image: url(images/background.png);
+        background-repeat: no-repeat;
     background-size: cover;
       /* background: #f2f7fa; */
     }
     .jumbotron {
-        margin-top: 70px;
-      background: #d9ecf2;
+        color: white;
+        margin-top: 90px;
       border-radius: 8px;
       padding: 2rem 1rem;
       margin-bottom: 2rem;
     }
     .card {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    }
+    .card:hover{
+        transform: scale(1.02);
     }
     #add-recipe,
     #recipes {
@@ -21,9 +24,10 @@
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
       padding: 2rem 1.5rem;
       margin-bottom: 2rem;
-    }
+    } 
+    
     .card-img-top {
-      height: 220px;
+      height: 300px;
       object-fit: cover;
       border-radius: 10px 10px 0 0;
       width: 100%;
@@ -39,11 +43,29 @@
       cursor: pointer;
     }
     .star-input {
-      display: none;
-    }
-    /* Highlight stars on hover or checked */
-    .star-input:checked ~ .star-label,
-    .star-label:hover,
-    .star-label:hover ~ .star-label {
-      color: #ffc107;
-    }
+  position: absolute;
+  left: -9999px;
+}
+
+.star-label {
+  font-size: 2rem;
+  color: #ccc;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+  padding: 0 3px;
+  display: inline-block;
+}
+
+/* Highlight on hover and when input checked */
+.star-label:hover,
+.star-label:hover ~ .star-label,
+.star-input:checked ~ .star-label {
+  color: #ffc107;
+}
+
+/* Reverse order for stars to work left to right */
+.rating {
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
