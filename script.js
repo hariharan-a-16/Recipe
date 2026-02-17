@@ -7,7 +7,7 @@ if (!recipes) {
       image:
         "images/adai -tamilnadu.jpeg",
       prepTime: "2 hrs soaking + 20 mins cooking",
-      ingredients: ["Raw rice 1 cup", "Toor dal ½ cup", "Chana dal  ¼ cup", "Urad dal  ¼ cup", "Dried red chilies 4 to 5", , "Curry leaves (few)", "Hing (asafoetida)  1 pinch", "Salt  to taste", "Oil – for cooking"],
+      ingredients: ["Raw rice 1 cup", "Toor dal ½ cup", "Chana dal  ¼ cup", "Urad dal  ¼ cup", "Dried red chilies 4 to 5", "Curry leaves (few)", "Hing (asafoetida)  1 pinch", "Salt  to taste", "Oil – for cooking"],
       method:
         "Soak rice and dals with red chilies 2 hrs. Grind coarsely with little water. Add salt, hing, curry leaves. Heat tawa, pour batter like thick dosa, drizzle oil, cook both sides till golden.",
       reviews: [],
@@ -69,6 +69,155 @@ if (!recipes) {
   ];
 }
 
+// Authentication Functions
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users")) || [];
+}
+
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem("currentUser"));
+}
+
+function setCurrentUser(user) {
+  localStorage.setItem("currentUser", JSON.stringify(user));
+}
+
+// Custom Toast Notification Function
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+    };
+    
+    toast.className = `custom-toast ${type}`;
+    toast.innerHTML = `
+        <span class="toast-icon">${icons[type]}</span>
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Remove after animation
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.remove();
+        }
+    }, 3000);
+}
+
+function updateAuthUI() {
+  const user = getCurrentUser();
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const showAddRecipeBtn = document.getElementById("showAddRecipeBtn");
+  const userGreeting = document.getElementById("userGreeting");
+
+  if (user) {
+    loginBtn.style.display = "none";
+    registerBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    showAddRecipeBtn.style.display = "inline-block";
+    userGreeting.style.display = "inline-block";
+    userGreeting.textContent = `Hi, ${user.name}!`;
+  } else {
+    loginBtn.style.display = "inline-block";
+    registerBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    showAddRecipeBtn.style.display = "none";
+    userGreeting.style.display = "none";
+  }
+}
+
+// Show Login Modal
+document.getElementById("loginBtn").addEventListener("click", () => {
+  new bootstrap.Modal(document.getElementById("loginModal")).show();
+});
+
+// Show Register Modal
+document.getElementById("registerBtn").addEventListener("click", () => {
+  new bootstrap.Modal(document.getElementById("registerModal")).show();
+});
+
+// Switch to Register from Login
+window.switchToRegister = function() {
+  bootstrap.Modal.getInstance(document.getElementById("loginModal")).hide();
+  setTimeout(() => {
+    new bootstrap.Modal(document.getElementById("registerModal")).show();
+  }, 300);
+};
+
+// Switch to Login from Register
+window.switchToLogin = function() {
+  bootstrap.Modal.getInstance(document.getElementById("registerModal")).hide();
+  setTimeout(() => {
+    new bootstrap.Modal(document.getElementById("loginModal")).show();
+  }, 300);
+};
+
+// Register Form Submit
+document.getElementById("registerForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("registerName").value.trim();
+  const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+  const password = document.getElementById("registerPassword").value;
+
+  const users = getUsers();
+  
+  // Check if email already exists
+  if (users.find(u => u.email === email)) {
+    showToast("Email already registered! Please login.", "warning");
+    switchToLogin();
+    return;
+  }
+
+  // Create new user
+  users.push({ name, email, password });
+  saveUsers(users);
+  
+  // Auto login after register
+  setCurrentUser({ name, email });
+  bootstrap.Modal.getInstance(document.getElementById("registerModal")).hide();
+  updateAuthUI();
+  showToast("Welcome to Monsoon Recipes! Registration successful!", "success");
+});
+
+// Login Form Submit
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.password === password);
+
+  if (user) {
+    setCurrentUser({ name: user.name, email: user.email });
+    bootstrap.Modal.getInstance(document.getElementById("loginModal")).hide();
+    updateAuthUI();
+    showToast(`Welcome back, ${user.name}!`, "success");
+  } else {
+    showToast("Invalid email or password!", "error");
+  }
+});
+
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem("currentUser");
+  updateAuthUI();
+  showToast("You have been logged out successfully!", "info");
+});
+
 function saveRecipes() {
   localStorage.setItem("recipes", JSON.stringify(recipes));
 }
@@ -97,16 +246,18 @@ function loadRecipes() {
     row.appendChild(card);
   });
 }
-const addRecipeSection = document.getElementById("addRecipeSection");
+const addRecipeSection = document.getElementById("add-recipe");
 const showAddRecipeBtn = document.getElementById("showAddRecipeBtn");
 
 showAddRecipeBtn.addEventListener("click", () => {
   if (addRecipeSection.style.display === "none" || addRecipeSection.style.display === "") {
     addRecipeSection.style.display = "block";
-    showAddRecipeBtn.textContent = "Hide Add Recipe";
+    showAddRecipeBtn.textContent = "✕ Close";
+    // Smooth scroll to form
+    addRecipeSection.scrollIntoView({ behavior: 'smooth' });
   } else {
     addRecipeSection.style.display = "none";
-    showAddRecipeBtn.textContent = "Add Recipe";
+    showAddRecipeBtn.textContent = "+ Add Recipe";
   }
 });
 
@@ -149,14 +300,16 @@ function renderStars(rating) {
 function showReviewModal(idx) {
   const recipe = recipes[idx];
   const modal = new bootstrap.Modal(document.getElementById("reviewModal"));
+  const user = getCurrentUser();
+  
   // Build review list HTML
   const reviewsHtml =
     recipe.reviews.length === 0
-      ? "<p>No reviews yet.</p>"
+      ? "<p class='text-muted'>No reviews yet. Be the first to review!</p>"
       : recipe.reviews
           .map(
             (rev) =>
-              `<div class="mb-2" ><strong>${renderStars(rev.rating)}</strong><br>${rev.text}</div>`
+              `<div class="mb-2" ><strong>${renderStars(rev.rating)}</strong><br><small class="text-muted">${rev.userName || 'Anonymous'}</small><p class="mb-0 mt-1">${rev.text}</p></div>`
           )
           .join("");
   document.querySelector("#reviewModal .modal-title").textContent = `Reviews for ${ recipe.name }`;
@@ -165,6 +318,19 @@ function showReviewModal(idx) {
   document.querySelectorAll("#reviewModal .star-input").forEach((star) => {
     star.checked = false;
   });
+  
+  // Show/hide review form based on login status
+  const reviewForm = document.getElementById("reviewForm");
+  const reviewAuthRequired = document.getElementById("reviewAuthRequired");
+  
+  if (user) {
+    reviewForm.style.display = "block";
+    reviewAuthRequired.style.display = "none";
+  } else {
+    reviewForm.style.display = "none";
+    reviewAuthRequired.style.display = "block";
+  }
+  
   document.querySelector("#reviewModal").setAttribute("data-idx", idx);
   modal.show();
 }
@@ -175,6 +341,12 @@ function addReview() {
     document.querySelector('#reviewModal input[name="rating"]:checked')?.value || 0
   );
   const text = document.querySelector("#reviewModal #reviewText").value.trim();
+  const user = getCurrentUser();
+
+  if (!user) {
+    alert("Please login to leave a review.");
+    return;
+  }
 
   if (rating === 0) {
     alert("Please select a star rating.");
@@ -185,15 +357,15 @@ function addReview() {
     return;
   }
 
-  // Save review locally
-  recipes[idx].reviews.push({ rating, text });
+  // Save review locally with user name
+  recipes[idx].reviews.push({ rating, text, userName: user.name });
   saveRecipes();   // update localStorage
   loadRecipes();   // refresh cards
 
   // Close modal
   const modal = bootstrap.Modal.getInstance(document.getElementById("reviewModal"));
   modal.hide();
-  alert("Review added!");
+  alert("Thank you for your review!");
 }
 
 // Attach submit handler
@@ -217,6 +389,13 @@ const form = document.getElementById("recipeForm");
 if (form) {
   form.addEventListener("submit", function (event) {
     event.preventDefault();
+    
+    const user = getCurrentUser();
+    if (!user) {
+      alert("Please login to add a recipe!");
+      return;
+    }
+    
     const name = document.getElementById("recipeName").value.trim();
     const ing = document.getElementById("recipeIngredients").value.trim();
     const method = document.getElementById("recipeMethod").value.trim();
@@ -230,12 +409,18 @@ if (form) {
           image: e.target.result,
           ingredients: ing.split(",").map((i) => i.trim()),
           method: method,
-          reviews: []
+          reviews: [],
+          addedBy: user.name
         });
         saveRecipes();
         loadRecipes();
         form.reset();
-        alert("Recipe added! Thank you.");
+        // Hide the form after adding
+        const addRecipeSection = document.getElementById("add-recipe");
+        addRecipeSection.style.display = "none";
+        const showAddRecipeBtn = document.getElementById("showAddRecipeBtn");
+        showAddRecipeBtn.textContent = "+ Add Recipe";
+        alert("Recipe added successfully! Thank you.");
       };
       reader.readAsDataURL(file);
     }
@@ -244,4 +429,5 @@ if (form) {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadRecipes();
+  updateAuthUI();
 });

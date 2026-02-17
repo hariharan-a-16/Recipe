@@ -7,41 +7,59 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" href="style.css">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-	<link rel="shortcut icon" href="images/icon3.png" type="image/x-icon">
+	<link rel="shortcut icon" href="images/ChatGPT Image Feb 17, 2026, 06_01_36 PM.png" type="image/x-icon">
 </head>
 
 <body>
+	<!-- Toast Notification Container -->
+	<div class="toast-container" id="toastContainer"></div>
+
 	<nav class="navbar navbar-expand-xxxl navbar-dark bg-dark fixed-top">
-		<a class="navbar-brand " href="#"
-			style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 1.6em;">
-			<img src="images/icon3.png" alt="" style="width: 50px; border-radius: 50px;"> Monsoon Recipes</a>
-		<button id="showAddRecipeBtn" class="btn btn-success me-4">Add Recipe</button>
+		<a class="navbar-brand" href="#">
+			<img src="images/ChatGPT Image Feb 17, 2026, 06_01_36 PM.png " alt="Monsoon Recipes Logo"> 
+			<span>Monsoon Recipes</span>
+		</a>
+		<div class="d-flex align-items-center gap-2">
+			<span id="userGreeting" class="text-white me-3" style="display: none;"></span>
+			<button id="showAddRecipeBtn" class="btn btn-success me-2" style="display: none;">+ Add Recipe</button>
+			<button id="loginBtn" class="btn btn-outline-light me-2">Login</button>
+			<button id="registerBtn" class="btn btn-warning me-2">Register</button>
+			<button id="logoutBtn" class="btn btn-outline-danger" style="display: none;">Logout</button>
+		</div>
 	</nav>
 
 	<section class="container">
 		<div class="jumbotron">
-			<h1 class="display-5 font-family:Arial"> <b><i>Enjoy the Monsoon with Tasty Recipes!</h1></b></i>
-			<p> <b>Try, share, and explore classic rainy day snacks from our community.</p></b>
+			<h1 class="display-5"> <b><i>Enjoy the Monsoon with Tasty Recipes!</i></b></h1>
+			<p>Try, share, and explore classic rainy day snacks from our community.</p>
 		</div>
 	</section>
-	<section id="add-recipe" class="container">
-  <div id="addRecipeSection" style="display: none;">
-      <h2>Add Your Recipe</h2>
-      <form id="recipeForm" autocomplete="off" enctype="multipart/form-data">
-        <input type="text" class="form-control mb-2" id="recipeName" placeholder="Recipe Name" required />
-        <input type="text" class="form-control mb-2" id="recipeIngredients" placeholder="Ingredients (comma separated)"
-          required />
-        <textarea class="form-control mb-2" id="recipeMethod" rows="3" placeholder="Method" required></textarea>
-        <input type="file" class="form-control mb-3" id="recipeImage" accept="image/*" required />
-        <button type="submit" class="btn btn-success">Add Recipe</button>
-      </form>
-    </div>
-  </section>
+	<section id="add-recipe" class="container" style="display: none;">
+		<div id="addRecipeSection">
+			<h2>Share Your Recipe</h2>
+			<form id="recipeForm" autocomplete="off" enctype="multipart/form-data">
+				<div class="mb-3">
+					<input type="text" class="form-control" id="recipeName" placeholder="Recipe Name" required />
+				</div>
+				<div class="mb-3">
+					<input type="text" class="form-control" id="recipeIngredients" placeholder="Ingredients (comma separated)" required />
+				</div>
+				<div class="mb-3">
+					<textarea class="form-control" id="recipeMethod" rows="4" placeholder="Cooking Method" required></textarea>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Recipe Image</label>
+					<input type="file" class="form-control" id="recipeImage" accept="image/*" required />
+				</div>
+				<button type="submit" class="btn btn-success btn-lg w-100">Add Recipe</button>
+			</form>
+		</div>
+	</section>
 
 	
 
 	<section id="recipes" class="container">
-		<h2>Featured Monsoon Recipes</h2>
+		<h2>🌧️ Featured Monsoon Recipes</h2>
 		<div class="row"></div>
 	</section>
 	
@@ -69,24 +87,27 @@
 				</div>
 				<div class="modal-body">
 					<div class="reviews-list mb-3"></div>
+					<div id="reviewAuthRequired" style="display: none;">
+						<p class="text-muted">Please <a href="#" onclick="document.getElementById('reviewModal').querySelector('.btn-close').click(); setTimeout(() => document.getElementById('loginBtn').click(), 300);">login</a> to leave a review.</p>
+					</div>
 					<form id="reviewForm">
-						<label class="form-label" style="font-size: 1.3em;">Your Rating:</label>
+						<label class="form-label">Your Rating:</label>
 						<div class="rating">
 							<input type="radio" id="star5" name="rating" class="star-input" value="5" />
-							<label for="star5" class="star-label">&#9733;</label>
+							<label for="star5" class="star-label" title="5 stars">★</label>
 							<input type="radio" id="star4" name="rating" class="star-input" value="4" />
-							<label for="star4" class="star-label">&#9733;</label>
+							<label for="star4" class="star-label" title="4 stars">★</label>
 							<input type="radio" id="star3" name="rating" class="star-input" value="3" />
-							<label for="star3" class="star-label">&#9733;</label>
+							<label for="star3" class="star-label" title="3 stars">★</label>
 							<input type="radio" id="star2" name="rating" class="star-input" value="2" />
-							<label for="star2" class="star-label">&#9733;</label>
+							<label for="star2" class="star-label" title="2 stars">★</label>
 							<input type="radio" id="star1" name="rating" class="star-input" value="1" />
-							<label for="star1" class="star-label">&#9733;</label>
+							<label for="star1" class="star-label" title="1 star">★</label>
 						</div>
 
 						<div class="mb-3">
 							<textarea class="form-control" id="reviewText" rows="3"
-								placeholder="Share your Feedback here . . ." required></textarea>
+								placeholder="Share your Feedback here..." required></textarea>
 						</div>
 						<button type="submit" class="btn btn-success w-100">Submit Review</button>
 					</form>
@@ -94,14 +115,76 @@
 			</div>
 		</div>
 	</div>
-<footer class="bg-dark text-white text-center py-3 mt-auto">
-		<div class="container">
-			<p class="mb-1">&copy; 2025 Monsoon Recipes. All rights reserved.</p>
-			<p class="mb-0">
-				Developed by the Monsoon Recipes Hub Team |
-				<a href="#" class="text-white text-decoration-underline">Privacy Policy</a> |
-				<a href="#" class="text-white text-decoration-underline">Terms of Service</a>
-			</p>
+
+	<!-- Login Modal -->
+	<div class="modal fade" tabindex="-1" id="loginModal" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="loginModalLabel">Login to Monsoon Recipes</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="loginForm">
+						<div class="mb-3">
+							<label class="form-label">Email</label>
+							<input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Password</label>
+							<input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required />
+						</div>
+						<button type="submit" class="btn btn-success w-100">Login</button>
+					</form>
+						<p class="text-center mt-3 mb-0">
+							Don't have an account? <a href="#" class="auth-switch" onclick="switchToRegister()">Register</a>
+						</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Register Modal -->
+	<div class="modal fade" tabindex="-1" id="registerModal" aria-labelledby="registerModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="registerModalLabel">Create Account</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="registerForm">
+						<div class="mb-3">
+							<label class="form-label">Full Name</label>
+							<input type="text" class="form-control" id="registerName" placeholder="Enter your name" required />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Email</label>
+							<input type="email" class="form-control" id="registerEmail" placeholder="Enter your email" required />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Password</label>
+							<input type="password" class="form-control" id="registerPassword" placeholder="Create a password" required minlength="6" />
+						</div>
+						<button type="submit" class="btn btn-warning w-100">Register</button>
+					</form>
+						<p class="text-center mt-3 mb-0">
+							Already have an account? <a href="#" class="auth-switch" onclick="switchToLogin()">Login</a>
+						</p>
+				</div>
+			</div>
+		</div>
+	</div>
+<footer class="footer">
+		<div class="container text-center">
+			<p class="mb-2" style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">&copy; 2025 Monsoon Recipes. All rights reserved.</p>
+			<div class="footer-links">
+				<span style="color: rgba(255,255,255,0.5);">Developed by the Monsoon Recipes Hub Team</span>
+				<span class="footer-separator">|</span>
+				<a href="#">Privacy Policy</a>
+				<span class="footer-separator">|</span>
+				<a href="#">Terms of Service</a>
+			</div>
 		</div>
 	</footer>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
